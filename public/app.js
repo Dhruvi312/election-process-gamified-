@@ -164,3 +164,92 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+// ===== DARK MODE =====
+const darkBtn = document.getElementById('dark-toggle');
+const html = document.documentElement;
+let dark = localStorage.getItem('darkMode') === '1';
+function applyDark() {
+  html.setAttribute('data-theme', dark ? 'dark' : 'light');
+  darkBtn.textContent = dark ? '☀️' : '🌙';
+  localStorage.setItem('darkMode', dark ? '1' : '0');
+}
+applyDark();
+darkBtn.addEventListener('click', () => { dark = !dark; applyDark(); showToast(dark ? '🌙 Dark mode on' : '☀️ Light mode on'); });
+
+// ===== LANGUAGE TOGGLE (EN / हि) =====
+const langBtn = document.getElementById('lang-toggle');
+const STRINGS = {
+  en: {
+    greeting: 'Namaste, Rahul 👋', sub: 'Ready to make a difference?',
+    status: 'Application Status Tracker', lb: 'District Leaderboard 🏅'
+  },
+  hi: {
+    greeting: 'नमस्ते, राहुल 👋', sub: 'बदलाव के लिए तैयार हैं?',
+    status: 'आवेदन स्थिति ट्रैकर', lb: 'जिला लीडरबोर्ड 🏅'
+  }
+};
+let lang = 'en';
+langBtn.addEventListener('click', () => {
+  lang = lang === 'en' ? 'hi' : 'en';
+  langBtn.textContent = lang === 'en' ? 'हि' : 'EN';
+  html.lang = lang === 'hi' ? 'hi' : 'en';
+  const s = STRINGS[lang];
+  document.getElementById('home-greeting').textContent = s.greeting;
+  document.getElementById('home-subgreeting').textContent = s.sub;
+  document.getElementById('status-title').textContent = s.status;
+  document.getElementById('lb-title').textContent = s.lb;
+  showToast(lang === 'hi' ? '🇮🇳 हिंदी चालू' : '🇮🇳 English on');
+});
+
+// ===== VOTER SEARCH =====
+document.getElementById('search-submit').addEventListener('click', handleSearch);
+document.getElementById('voter-search').addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(); });
+function handleSearch() {
+  const val = document.getElementById('voter-search').value.trim();
+  const res = document.getElementById('search-result');
+  if (!val) { res.textContent = '⚠️ Please enter a name or EPIC number.'; res.style.color = '#e53935'; return; }
+  res.style.color = 'var(--green)';
+  res.textContent = '🔍 Redirecting to ECI Voter Search...';
+  setTimeout(() => {
+    window.open(`https://electoralsearch.eci.gov.in/?lang=en&searchBy=name&qn=${encodeURIComponent(val)}`, '_blank', 'noopener');
+    res.textContent = '✅ Opened ECI Electoral Search Portal';
+  }, 600);
+}
+
+// ===== STATUS TRACKER =====
+document.getElementById('track-btn').addEventListener('click', () => {
+  const val = document.getElementById('ref-id-input').value.trim();
+  if (!val) { showToast('⚠️ Enter a valid Reference ID'); return; }
+  const steps = document.getElementById('status-steps');
+  steps.style.display = 'flex';
+  steps.style.animation = 'fadeSlideIn .3s ease';
+  showToast('✅ Status loaded for: ' + val);
+});
+
+// ===== WHATSAPP SHARE =====
+document.getElementById('wa-share').addEventListener('click', () => {
+  const msg = encodeURIComponent('🗳️ My Polling Booth:\nConstituency: Kasba Peth (200)\nPart: 12, S.No: 44\nAddress: Kasba Ganpati School, Pune\n\nCheck yours: https://voters.eci.gov.in\nCall: 1950');
+  window.open(`https://wa.me/?text=${msg}`, '_blank', 'noopener');
+});
+
+// ===== I VOTED BADGE =====
+document.getElementById('i-voted-btn').addEventListener('click', () => {
+  const msg = encodeURIComponent('🗳️ I voted today! Proud to be part of India\'s democracy 🇮🇳\nHave you voted? Check your status at: https://matdata-saarthi-2026.web.app\n#MatdataSaarthi #IVoted #Election2026');
+  if (navigator.share) {
+    navigator.share({ title: 'I Voted! 🗳️', text: decodeURIComponent(msg), url: 'https://matdata-saarthi-2026.web.app' });
+  } else {
+    window.open(`https://wa.me/?text=${msg}`, '_blank', 'noopener');
+  }
+  showToast('🎉 Sharing your "I Voted" badge!');
+});
+
+// ===== PWA SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('✅ Matdata Saarthi: Offline mode ready'))
+      .catch(e => console.warn('SW failed:', e));
+  });
+}
+

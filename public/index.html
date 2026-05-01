@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Matdata Saarthi – Your Election Guide</title>
-  <meta name="description" content="Matdata Saarthi is a gamified voter education platform for Indian citizens. Track registration, learn about elections, and earn impact points." />
+  <meta name="description" content="Matdata Saarthi: India's gamified voter education portal. Find your booth, track registration, quiz yourself on elections." />
+  <meta name="theme-color" content="#FF8C00" />
+  <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
@@ -16,17 +18,28 @@
     <div class="screen active" id="screen-home">
       <header class="top-bar">
         <div class="top-bar-left">
-          <div class="avatar">RK</div>
+          <div class="avatar" aria-label="User avatar: RK">RK</div>
           <div>
-            <p class="greeting">Namaste, Rahul 👋</p>
-            <p class="sub-greeting">Ready to make a difference?</p>
+            <p class="greeting" id="home-greeting">Namaste, Rahul 👋</p>
+            <p class="sub-greeting" id="home-subgreeting">Ready to make a difference?</p>
           </div>
         </div>
-        <button class="icon-btn notif-btn" aria-label="Notifications">
-          🔔<span class="notif-dot"></span>
-        </button>
+        <div class="top-bar-actions">
+          <button class="icon-btn" id="lang-toggle" aria-label="Toggle language">हि</button>
+          <button class="icon-btn" id="dark-toggle" aria-label="Toggle dark mode">🌙</button>
+        </div>
       </header>
       <div class="scroll-area">
+        <!-- Search Bar -->
+        <div class="search-bar-wrap">
+          <input class="search-bar" id="voter-search" type="search" placeholder="🔍 Search by Name or EPIC number..." aria-label="Search voter by name or EPIC" />
+          <button class="search-btn" id="search-submit" aria-label="Search">Go</button>
+        </div>
+        <div class="search-result" id="search-result" role="status" aria-live="polite"></div>
+
+        <!-- Privacy badge -->
+        <div class="privacy-badge" role="note" aria-label="Data privacy notice">🔒 No Data Stored — All searches are local only</div>
+
         <div class="card readiness-card">
           <div class="readiness-left">
             <h2>Election Readiness</h2>
@@ -86,7 +99,23 @@
           </div>
         </div>
 
-        <h3 class="section-title">District Leaderboard 🏅</h3>
+        <!-- Status Tracker -->
+        <h3 class="section-title" id="status-title">Application Status Tracker</h3>
+        <div class="card status-card">
+          <div class="status-input-row">
+            <input class="status-input" id="ref-id-input" type="text" placeholder="Enter Reference ID (e.g. MH/2026/123456)" aria-label="Application reference ID" />
+            <button class="btn-primary status-track-btn" id="track-btn">Track</button>
+          </div>
+          <div class="status-steps" id="status-steps" style="display:none">
+            <div class="status-step done"><div class="ss-dot"></div><span>Submitted</span></div>
+            <div class="status-step done"><div class="ss-dot"></div><span>Verified by BLO</span></div>
+            <div class="status-step active"><div class="ss-dot"></div><span>Under Review</span></div>
+            <div class="status-step"><div class="ss-dot"></div><span>Approved</span></div>
+            <div class="status-step"><div class="ss-dot"></div><span>Roll Updated</span></div>
+          </div>
+        </div>
+
+        <h3 class="section-title" id="lb-title">District Leaderboard 🏅</h3>
         <div class="card leaderboard-card">
           <div class="lb-row"><span class="lb-rank">🥇</span><div class="lb-av" style="background:#B7791F">AS</div><span class="lb-name">Amit Sharma</span><span class="lb-pts">1,240 pts</span></div>
           <div class="lb-row"><span class="lb-rank">🥈</span><div class="lb-av" style="background:#718096">PD</div><span class="lb-name">Priya Desai</span><span class="lb-pts">1,105 pts</span></div>
@@ -254,9 +283,11 @@
           </div>
         </div>
         <div class="card link-card">
-          <a href="https://voters.eci.gov.in" target="_blank" class="ext-link">🔗 voters.eci.gov.in — Voter Service Portal</a>
-          <a href="https://electoralsearch.eci.gov.in" target="_blank" class="ext-link">🔗 electoralsearch.eci.gov.in — Electoral Roll</a>
+          <a href="https://voters.eci.gov.in" target="_blank" rel="noopener" class="ext-link">🔗 voters.eci.gov.in — Voter Service Portal</a>
+          <a href="https://electoralsearch.eci.gov.in" target="_blank" rel="noopener" class="ext-link">🔗 electoralsearch.eci.gov.in — Electoral Roll</a>
           <a href="tel:1950" class="ext-link">📞 Voter Helpline 1950 (Free)</a>
+          <button class="ext-link whatsapp-btn" id="wa-share" aria-label="Share booth details on WhatsApp">💬 Share Booth Details on WhatsApp</button>
+          <button class="btn-primary voted-btn" id="i-voted-btn" aria-label="Share I Voted badge">🗳️ Share 'I Voted' Badge</button>
         </div>
       </div>
     </div>
